@@ -1,28 +1,29 @@
-import { Request, Response } from "express"
-import { AppDataSource } from "../data-source"
-import { User } from "../models/User"
+import { Request, Response } from "express";
+import { AppDataSource } from "../data-source";
+import { User } from "../models/User";
 
 const userRepository = AppDataSource.getRepository(User);
 
 class UserController {
     static createUser = async (req: Request, res: Response) => {
-        const {name, age} = req.body
+        const { name, age, email, password } = req.body;
         try {
             const user = new User();
             user.name = name;
             user.age = age;
+            user.email = email;
+            user.password = password;
 
             await userRepository.save(user);
             return res.json({
                 ok: true,
                 msg: "user was save",
-            })
+            });
         } catch (error) {
             return res.json({
                 ok: false,
                 msg: `Error -> ${error}`,
-            })
-            
+            });
         }
     };
 
@@ -30,57 +31,60 @@ class UserController {
         try {
             const users = await userRepository.find();
 
-            return users.length>0 ? res.json({ok: true, users}):
-            res.json({ok:false, msg:"user not found"});
+            return users.length > 0
+                ? res.json({ ok: true, users })
+                : res.json({ ok: false, msg: "user not found" });
         } catch (error) {
             return res.json({
                 ok: false,
-                msg: `Error => ${error}`
-            })
-            
+                msg: `Error => ${error}`,
+            });
         }
-    }
+    };
 
-    static getUser =async (req: Request, res: Response) => {
+    static getUser = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
 
         try {
             const user = await userRepository.findOne({
-                where:{id},
+                where: { id },
             });
 
-            return user ? res.json({ok: true, user}):
-            res.json({ok:false, msg: "user not found"});
+            return user
+                ? res.json({ ok: true, user })
+                : res.json({ ok: false, msg: "user not found" });
         } catch (error) {
             return res.json({
                 ok: false,
-                msg: `Error => ${error}`
-            })
+                msg: `Error => ${error}`,
+            });
         }
-    }
+    };
 
     //update
     static updateUser = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
 
-        const {name, age} = req.body;
+        const { name, age, email, password } = req.body;
         const repoUser = AppDataSource.getRepository(User);
         let user: User;
 
         try {
             user = await repoUser.findOneOrFail({
-                where: {id, state: true},
+                where: { id, state: true },
             });
-            if (!user){
+            if (!user) {
                 throw new Error("User dont exist in data base");
             }
-            user.name= name,
-            user.age= age
+            (user.name = name),
+                (user.age = age),
+                (user.email = email),
+                (user.password = password);
 
             await repoUser.save(user);
             return res.json({
-                ok:true,
-                msg: "User was update"
+                ok: true,
+                msg: "User was update",
             });
         } catch (error) {
             return res.json({
@@ -88,18 +92,20 @@ class UserController {
                 msg: "Server error",
             });
         }
-    }
+    };
+    
     //delete
-    static deleteUser =async (res: Response, req: Request) => {
+    static deleteUser = async (req: Request, res: Response) => {
+        
         const id = parseInt(req.params.id);
         const repoUser = AppDataSource.getRepository(User);
         try {
             const user = await repoUser.findOne({
-                where:{id},
+                where: { id },
             });
 
-            console.log(user)
-            if (!user){
+            console.log(user);
+            if (!user) {
                 throw new Error("User dont exist in data base");
             }
             user.state = false;
@@ -107,16 +113,14 @@ class UserController {
             return res.json({
                 ok: true,
                 msg: "User was delete",
-            })
+            });
         } catch (e) {
             return res.json({
                 ok: false,
-                msg: "Server error"
-            })
+                msg: "Server error",
+            });
         }
-        
-    }
+    };
 }
 
 export default UserController;
-

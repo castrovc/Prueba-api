@@ -37,33 +37,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("../data-source");
-var User_1 = require("../models/User");
-var userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
-var UserController = /** @class */ (function () {
-    function UserController() {
+var Rol_1 = require("../models/Rol");
+var rolRepository = data_source_1.AppDataSource.getRepository(Rol_1.Rol);
+var RolController = /** @class */ (function () {
+    function RolController() {
     }
     var _a;
-    _a = UserController;
-    UserController.createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _b, name, age, email, password, user, error_1;
+    _a = RolController;
+    RolController.createRol = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var _b, type, description, rol, error_1;
         return __generator(_a, function (_c) {
             switch (_c.label) {
                 case 0:
-                    _b = req.body, name = _b.name, age = _b.age, email = _b.email, password = _b.password;
+                    _b = req.body, type = _b.type, description = _b.description;
                     _c.label = 1;
                 case 1:
                     _c.trys.push([1, 3, , 4]);
-                    user = new User_1.User();
-                    user.name = name;
-                    user.age = age;
-                    user.email = email;
-                    user.password = password;
-                    return [4 /*yield*/, userRepository.save(user)];
+                    rol = new Rol_1.Rol();
+                    rol.type = type;
+                    rol.description = description;
+                    return [4 /*yield*/, rolRepository.save(rol)];
                 case 2:
                     _c.sent();
                     return [2 /*return*/, res.json({
                             ok: true,
-                            msg: "user was save",
+                            msg: "rol was save",
                         })];
                 case 3:
                     error_1 = _c.sent();
@@ -75,30 +73,30 @@ var UserController = /** @class */ (function () {
             }
         });
     }); };
-    UserController.getUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var users, error_2;
+    RolController.getRoles = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var roles, error_2;
         return __generator(_a, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, userRepository.find()];
+                    return [4 /*yield*/, rolRepository.find()];
                 case 1:
-                    users = _b.sent();
-                    return [2 /*return*/, users.length > 0
-                            ? res.json({ ok: true, users: users })
-                            : res.json({ ok: false, msg: "user not found" })];
+                    roles = _b.sent();
+                    return [2 /*return*/, roles.length > 0
+                            ? res.json({ ok: true, roles: roles })
+                            : res.json({ ok: false, msg: "rol not found" })];
                 case 2:
                     error_2 = _b.sent();
                     return [2 /*return*/, res.json({
                             ok: false,
-                            msg: "Error => ".concat(error_2),
+                            msg: "Error -> ".concat(error_2),
                         })];
                 case 3: return [2 /*return*/];
             }
         });
     }); };
-    UserController.getUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var id, user, error_3;
+    RolController.getRol = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var id, rol, error_3;
         return __generator(_a, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -106,54 +104,51 @@ var UserController = /** @class */ (function () {
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, userRepository.findOne({
+                    return [4 /*yield*/, rolRepository.findOne({
                             where: { id: id },
                         })];
                 case 2:
-                    user = _b.sent();
-                    return [2 /*return*/, user
-                            ? res.json({ ok: true, user: user })
-                            : res.json({ ok: false, msg: "user not found" })];
+                    rol = _b.sent();
+                    return [2 /*return*/, rol
+                            ? res.json({ ok: true, rol: rol })
+                            : res.json({ ok: false, msg: "rol not found" })];
                 case 3:
                     error_3 = _b.sent();
                     return [2 /*return*/, res.json({
                             ok: false,
-                            msg: "Error => ".concat(error_3),
+                            msg: "Error -> ".concat(error_3),
                         })];
                 case 4: return [2 /*return*/];
             }
         });
     }); };
-    //update
-    UserController.updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var id, _b, name, age, email, password, repoUser, user, error_4;
+    //UPDATE
+    RolController.updateRol = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var id, _b, type, description, repoRol, rol, error_4;
         return __generator(_a, function (_c) {
             switch (_c.label) {
                 case 0:
                     id = parseInt(req.params.id);
-                    _b = req.body, name = _b.name, age = _b.age, email = _b.email, password = _b.password;
-                    repoUser = data_source_1.AppDataSource.getRepository(User_1.User);
+                    _b = req.body, type = _b.type, description = _b.description;
+                    repoRol = data_source_1.AppDataSource.getRepository(Rol_1.Rol);
                     _c.label = 1;
                 case 1:
                     _c.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, repoUser.findOneOrFail({
+                    return [4 /*yield*/, repoRol.findOneOrFail({
                             where: { id: id, state: true },
                         })];
                 case 2:
-                    user = _c.sent();
-                    if (!user) {
-                        throw new Error("User dont exist in data base");
+                    rol = _c.sent();
+                    if (!rol) {
+                        throw new Error("Rol dont exist in data base");
                     }
-                    (user.name = name),
-                        (user.age = age),
-                        (user.email = email),
-                        (user.password = password);
-                    return [4 /*yield*/, repoUser.save(user)];
+                    rol.type = type, rol.description = description;
+                    return [4 /*yield*/, repoRol.save(rol)];
                 case 3:
                     _c.sent();
                     return [2 /*return*/, res.json({
                             ok: true,
-                            msg: "User was update",
+                            msg: "Rol was update"
                         })];
                 case 4:
                     error_4 = _c.sent();
@@ -166,44 +161,44 @@ var UserController = /** @class */ (function () {
         });
     }); };
     //delete
-    UserController.deleteUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var id, repoUser, user, e_1;
+    RolController.deleteRol = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var id, repoRol, rol, e_1;
         return __generator(_a, function (_b) {
             switch (_b.label) {
                 case 0:
                     id = parseInt(req.params.id);
-                    repoUser = data_source_1.AppDataSource.getRepository(User_1.User);
+                    repoRol = data_source_1.AppDataSource.getRepository(Rol_1.Rol);
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, repoUser.findOne({
+                    return [4 /*yield*/, repoRol.findOne({
                             where: { id: id },
                         })];
                 case 2:
-                    user = _b.sent();
-                    console.log(user);
-                    if (!user) {
-                        throw new Error("User dont exist in data base");
+                    rol = _b.sent();
+                    console.log(rol);
+                    if (!rol) {
+                        throw new Error("Rol dont exist in data base");
                     }
-                    user.state = false;
-                    return [4 /*yield*/, repoUser.save(user)];
+                    rol.state = false;
+                    return [4 /*yield*/, repoRol.save(rol)];
                 case 3:
                     _b.sent();
                     return [2 /*return*/, res.json({
                             ok: true,
-                            msg: "User was delete",
+                            msg: "Rol was delete",
                         })];
                 case 4:
                     e_1 = _b.sent();
                     return [2 /*return*/, res.json({
                             ok: false,
-                            msg: "Server error",
+                            msg: "Server error"
                         })];
                 case 5: return [2 /*return*/];
             }
         });
     }); };
-    return UserController;
+    return RolController;
 }());
-exports.default = UserController;
-//# sourceMappingURL=user.controller.js.map
+exports.default = RolController;
+//# sourceMappingURL=rol.controller.js.map

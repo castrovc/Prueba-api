@@ -7,6 +7,10 @@ var express_1 = require("express");
 var user_controller_1 = __importDefault(require("../controllers/user.controller"));
 var router = (0, express_1.Router)();
 var user = user_controller_1.default;
-router.post("/", user.createUser);
+router.post("/", user.createUser),
+    router.get("/", user.getUsers),
+    router.get("/:id", user.getUser),
+    router.put("/:id", user.updateUser),
+    router.delete("/:id", user.deleteUser);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map

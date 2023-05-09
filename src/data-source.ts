@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm";
+import { Rol } from "./models/Rol";
 
 export const AppDataSource = new DataSource({
     type: 'mysql',

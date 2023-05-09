@@ -9,38 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Rol = void 0;
 var typeorm_1 = require("typeorm");
-var User = exports.User = /** @class */ (function () {
-    function User() {
+var Rol = exports.Rol = /** @class */ (function () {
+    function Rol() {
     }
     __decorate([
         (0, typeorm_1.PrimaryGeneratedColumn)(),
         __metadata("design:type", Number)
-    ], User.prototype, "id", void 0);
+    ], Rol.prototype, "id", void 0);
     __decorate([
         (0, typeorm_1.Column)(),
         __metadata("design:type", String)
-    ], User.prototype, "name", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", Number)
-    ], User.prototype, "age", void 0);
+    ], Rol.prototype, "type", void 0);
     __decorate([
         (0, typeorm_1.Column)(),
         __metadata("design:type", String)
-    ], User.prototype, "email", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], User.prototype, "password", void 0);
+    ], Rol.prototype, "description", void 0);
     __decorate([
         (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", Boolean)
-    ], User.prototype, "state", void 0);
-    User = __decorate([
+    ], Rol.prototype, "state", void 0);
+    Rol = __decorate([
         (0, typeorm_1.Entity)()
-    ], User);
-    return User;
+    ], Rol);
+    return Rol;
 }());
-//# sourceMappingURL=User.js.map
+//# sourceMappingURL=Rol.js.map

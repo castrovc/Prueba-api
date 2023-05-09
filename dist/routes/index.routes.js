@@ -7,10 +7,12 @@ var dotenv_1 = __importDefault(require("dotenv"));
 var express_1 = require("express");
 //importar entidades
 var user_routes_1 = __importDefault(require("./user.routes"));
+var rol_routes_1 = __importDefault(require("./rol.routes"));
 dotenv_1.default.config();
 var URL = process.env.URL;
 var router = (0, express_1.Router)();
 //rutas
-router.use("".concat(URL, "/user"), user_routes_1.default);
+router.use("".concat(URL, "/user"), user_routes_1.default),
+    router.use("".concat(URL, "/rol"), rol_routes_1.default);
 exports.default = router;
 //# sourceMappingURL=index.routes.js.map
