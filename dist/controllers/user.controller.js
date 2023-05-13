@@ -35,43 +35,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("../data-source");
 var User_1 = require("../models/User");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
+var encryptPassword = function (password) { return __awaiter(void 0, void 0, void 0, function () {
+    var salt;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, bcryptjs_1.default.genSalt(10)];
+            case 1:
+                salt = _a.sent();
+                return [2 /*return*/, bcryptjs_1.default.hash(password, salt)];
+        }
+    });
+}); };
+// async function validatePassword(password:string): Promise<boolean> {
+//     return await bcrypt.compare(password, this.password);
+// }
 var UserController = /** @class */ (function () {
     function UserController() {
     }
     var _a;
     _a = UserController;
     UserController.createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _b, name, age, email, password, user, error_1;
-        return __generator(_a, function (_c) {
-            switch (_c.label) {
+        var _b, name, rolId, age, email, password, user, _c, token_1, error_1;
+        return __generator(_a, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _b = req.body, name = _b.name, age = _b.age, email = _b.email, password = _b.password;
-                    _c.label = 1;
+                    _b = req.body, name = _b.name, rolId = _b.rolId, age = _b.age, email = _b.email, password = _b.password;
+                    _d.label = 1;
                 case 1:
-                    _c.trys.push([1, 3, , 4]);
+                    _d.trys.push([1, 4, , 5]);
                     user = new User_1.User();
                     user.name = name;
+                    user.rol = rolId;
                     user.age = age;
                     user.email = email;
                     user.password = password;
-                    return [4 /*yield*/, userRepository.save(user)];
+                    _c = user;
+                    return [4 /*yield*/, encryptPassword(user.password)];
                 case 2:
-                    _c.sent();
-                    return [2 /*return*/, res.json({
+                    _c.password = _d.sent();
+                    return [4 /*yield*/, userRepository.save(user)];
+                case 3:
+                    _d.sent();
+                    token_1 = jsonwebtoken_1.default.sign({ id: user.id }, process.env.TOKEN_SECRET || 'tokentest');
+                    return [2 /*return*/, res.header('token', token_1).json({
                             ok: true,
                             msg: "user was save",
                         })];
-                case 3:
-                    error_1 = _c.sent();
+                case 4:
+                    error_1 = _d.sent();
                     return [2 /*return*/, res.json({
                             ok: false,
                             msg: "Error -> ".concat(error_1),
                         })];
-                case 4: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     }); };
@@ -81,7 +106,12 @@ var UserController = /** @class */ (function () {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, userRepository.find()];
+                    return [4 /*yield*/, userRepository.find({
+                            relations: {
+                                rol: true
+                            },
+                            where: { state: true }
+                        })];
                 case 1:
                     users = _b.sent();
                     return [2 /*return*/, users.length > 0
@@ -91,6 +121,7 @@ var UserController = /** @class */ (function () {
                     error_2 = _b.sent();
                     return [2 /*return*/, res.json({
                             ok: false,
+                            // msg:(token),
                             msg: "Error => ".concat(error_2),
                         })];
                 case 3: return [2 /*return*/];
@@ -200,6 +231,29 @@ var UserController = /** @class */ (function () {
                             msg: "Server error",
                         })];
                 case 5: return [2 /*return*/];
+            }
+        });
+    }); };
+    // ->LOGGIN<-
+    UserController.loggin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var _b, email, password, user, passwordCorrect;
+        return __generator(_a, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _b = req.body, email = _b.email, password = _b.password;
+                    return [4 /*yield*/, userRepository.findOne({ where: { email: email } })];
+                case 1:
+                    user = _c.sent();
+                    if (!user)
+                        return [2 /*return*/, res.status(400).json("incorrect credentials")];
+                    passwordCorrect = bcryptjs_1.default.compareSync(password, user.password);
+                    if (!passwordCorrect) {
+                        return [2 /*return*/, res.status(401).json({ msg: 'incorrect credential' })];
+                    }
+                    return [2 /*return*/, res.json({
+                            ok: true,
+                            msg: 'has iniciado sesion'
+                        })];
             }
         });
     }); };

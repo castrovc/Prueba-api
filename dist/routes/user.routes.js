@@ -12,5 +12,6 @@ router.post("/", user.createUser),
     router.get("/:id", user.getUser),
     router.put("/:id", user.updateUser),
     router.delete("/:id", user.deleteUser);
+router.post('/loggin', user.loggin);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map

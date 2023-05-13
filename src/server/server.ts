@@ -3,6 +3,7 @@ import express, {Application} from 'express'
 import morgan from 'morgan'
 import router from '../routes/index.routes'
 
+
 class Server{
 private app : Application
 public static readonly PORT: number = 3000
@@ -21,6 +22,7 @@ middlewares(){
     this.app.use(express.urlencoded({extended: true, limit: '50mb'}))
 
     this.app.use('/', router)
+    
 }
 
 listen (){
@@ -28,6 +30,6 @@ listen (){
         console.log(`Server running in ${this.port}`)
     })
 }
-
 }
+
 export default Server

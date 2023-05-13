@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+import { User } from "./User";
 
 @Entity()
 export class Rol {
@@ -13,4 +14,7 @@ export class Rol {
 
     @Column({default: true})
     state: boolean;
+
+    @OneToMany(() => User, (user) => user.id)
+    user: User
 }

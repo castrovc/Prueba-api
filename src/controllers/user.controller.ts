@@ -1,25 +1,44 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../models/User";
+import { Rol } from "../models/Rol";
+
+import  jwt  from "jsonwebtoken";
+import bcrypt from 'bcryptjs';
+import { token } from "morgan";
 
 const userRepository = AppDataSource.getRepository(User);
 
+// -->ENCRIPTAR PASSWORD<--
+const encryptPassword = async (password: string): Promise<string> => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+}
 class UserController {
+
     static createUser = async (req: Request, res: Response) => {
-        const { name, age, email, password } = req.body;
+        const { name, rolId, age, email, password } = req.body;
         try {
             const user = new User();
             user.name = name;
+            user.rol = rolId;
             user.age = age;
             user.email = email;
             user.password = password;
 
+            user.password= await encryptPassword(user.password);
             await userRepository.save(user);
-            return res.json({
+
+            //token
+            const token : string = jwt.sign({ id:user.id }, process.env.TOKEN_SECRET || 'tokentest')
+                
+            
+            return res.header('token', token).json({
                 ok: true,
                 msg: "user was save",
             });
-        } catch (error) {
+        } 
+            catch (error) {
             return res.json({
                 ok: false,
                 msg: `Error -> ${error}`,
@@ -29,7 +48,12 @@ class UserController {
 
     static getUsers = async (req: Request, res: Response) => {
         try {
-            const users = await userRepository.find();
+            const users = await userRepository.find({
+                relations:{
+                    rol:true
+                },
+                where: {state:true}
+            });
 
             return users.length > 0
                 ? res.json({ ok: true, users })
@@ -37,6 +61,7 @@ class UserController {
         } catch (error) {
             return res.json({
                 ok: false,
+                // msg:(token),
                 msg: `Error => ${error}`,
             });
         }
@@ -121,6 +146,27 @@ class UserController {
             });
         }
     };
+
+    // ->LOGGIN<-
+    static loggin =async (req: Request, res: Response) => {
+
+        const {email, password} = req.body;
+
+        const user = await userRepository.findOne({where: {email}});
+        if (!user) return res.status(400).json("incorrect credentials");
+
+        const passwordCorrect = bcrypt.compareSync(password, user.password)
+        if (!passwordCorrect) {
+            return res.status(401).json({msg:'incorrect credential'});
+        }
+
+        return res.json({
+            ok: true,
+            msg: 'has iniciado sesion'
+        })
+}
+
+
 }
 
 export default UserController;

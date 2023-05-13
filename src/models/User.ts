@@ -1,5 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm"
-
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm"
+import { Rol } from "./Rol";
 
 @Entity()
 export class User {
@@ -20,4 +20,8 @@ export class User {
 
     @Column({default: true})
     state: boolean;
+
+    @ManyToOne(() => Rol, (rol) => rol.user)
+    rol: Rol
+    
 }
