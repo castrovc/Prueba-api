@@ -41,9 +41,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("../data-source");
 var User_1 = require("../models/User");
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
+var tokenSing = require('../models/generateToken').tokenSing;
 var userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
+// -->ENCRIPTAR PASSWORD<--
 var encryptPassword = function (password) { return __awaiter(void 0, void 0, void 0, function () {
     var salt;
     return __generator(this, function (_a) {
@@ -55,16 +56,13 @@ var encryptPassword = function (password) { return __awaiter(void 0, void 0, voi
         }
     });
 }); };
-// async function validatePassword(password:string): Promise<boolean> {
-//     return await bcrypt.compare(password, this.password);
-// }
 var UserController = /** @class */ (function () {
     function UserController() {
     }
     var _a;
     _a = UserController;
     UserController.createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _b, name, rolId, age, email, password, user, _c, token_1, error_1;
+        var _b, name, rolId, age, email, password, user, _c, error_1;
         return __generator(_a, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -85,8 +83,9 @@ var UserController = /** @class */ (function () {
                     return [4 /*yield*/, userRepository.save(user)];
                 case 3:
                     _d.sent();
-                    token_1 = jsonwebtoken_1.default.sign({ id: user.id }, process.env.TOKEN_SECRET || 'tokentest');
-                    return [2 /*return*/, res.header('token', token_1).json({
+                    //token
+                    // const token : string = jwt.sign({ id:user.id }, process.env.TOKEN_SECRET || 'tokentest')
+                    return [2 /*return*/, res.json({
                             ok: true,
                             msg: "user was save",
                         })];
@@ -236,7 +235,7 @@ var UserController = /** @class */ (function () {
     }); };
     // ->LOGGIN<-
     UserController.loggin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _b, email, password, user, passwordCorrect;
+        var _b, email, password, user, passwordCorrect, sessionToken;
         return __generator(_a, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -250,9 +249,17 @@ var UserController = /** @class */ (function () {
                     if (!passwordCorrect) {
                         return [2 /*return*/, res.status(401).json({ msg: 'incorrect credential' })];
                     }
+                    return [4 /*yield*/, tokenSing(user)];
+                case 2:
+                    sessionToken = _c.sent();
+                    if (passwordCorrect) {
+                        data: user;
+                        sessionToken;
+                    }
                     return [2 /*return*/, res.json({
                             ok: true,
-                            msg: 'has iniciado sesion'
+                            sessionToken: sessionToken,
+                            msg: 'session started'
                         })];
             }
         });

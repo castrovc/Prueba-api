@@ -3,9 +3,9 @@ import { AppDataSource } from "../data-source";
 import { User } from "../models/User";
 import { Rol } from "../models/Rol";
 
-import  jwt  from "jsonwebtoken";
 import bcrypt from 'bcryptjs';
-import { token } from "morgan";
+
+const {tokenSing} = require('../models/generateToken')
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -14,6 +14,7 @@ const encryptPassword = async (password: string): Promise<string> => {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(password, salt);
 }
+
 class UserController {
 
     static createUser = async (req: Request, res: Response) => {
@@ -30,10 +31,10 @@ class UserController {
             await userRepository.save(user);
 
             //token
-            const token : string = jwt.sign({ id:user.id }, process.env.TOKEN_SECRET || 'tokentest')
+            // const token : string = jwt.sign({ id:user.id }, process.env.TOKEN_SECRET || 'tokentest')
                 
             
-            return res.header('token', token).json({
+            return res.json({
                 ok: true,
                 msg: "user was save",
             });
@@ -159,10 +160,17 @@ class UserController {
         if (!passwordCorrect) {
             return res.status(401).json({msg:'incorrect credential'});
         }
+        
+        const sessionToken = await tokenSing(user)
+        if(passwordCorrect){
+            data: user
+            sessionToken
+        }
 
         return res.json({
             ok: true,
-            msg: 'has iniciado sesion'
+            sessionToken,
+            msg: 'session started'
         })
 }
 
